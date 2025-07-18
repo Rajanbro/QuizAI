@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const elCategory = document.getElementById("category");
   const elSpinner = document.getElementById("spinner");
   const elExportButton = document.getElementById("export-results");
-
+  const elRestartButton = document.getElementById("restart-btn"); // ✅
 
   let currentQ = null;
 
@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sessionStorage.setItem("total", "0");
     elStatus.textContent = "";
     elNext.style.display = "inline-block";
+    elRestartButton.style.display = "none"; // ✅ hide restart on new start
     await loadQuestion();
   });
 
@@ -49,7 +50,18 @@ document.addEventListener("DOMContentLoaded", () => {
       elStatus.textContent = `Score: ${score} / ${total}`;
     }
 
-    await loadQuestion();
+    const response = await fetch(`${API}/question?category=${elCategory.value}`);
+    if (!response.ok) {
+      elQ.textContent = "No more questions available.";
+      elOpts.innerHTML = "";
+      elNext.style.display = "none";
+      elRestartButton.style.display = "inline-block"; // ✅ show restart when quiz ends
+      return;
+    }
+
+    const data = await response.json();
+    currentQ = data;
+    renderQuestion(data);
   });
 
   // Export Results
@@ -65,23 +77,39 @@ document.addEventListener("DOMContentLoaded", () => {
     a.click();
   });
 
-  // Fetch question from backend
+  // Restart Quiz
+  elRestartButton.addEventListener("click", () => {
+    sessionStorage.setItem("score", "0");
+    sessionStorage.setItem("total", "0");
+    elStatus.textContent = "";
+    elQ.textContent = "Click \"Start Quiz\" to begin.";
+    elOpts.innerHTML = "";
+    elRestartButton.style.display = "none";
+    elNext.style.display = "none";
+  });
+
+  // Fetch and render question
   async function loadQuestion() {
-    console.log("Start Quiz clicked");
-    const category = elCategory.value;
-    console.log("Selected category:", category);
     elSpinner.style.display = "block";
 
-    const response = await fetch(`${API}/question?category=${category}`);
-    const data = await response.json();
-    currentQ = data;
-    console.log("Received question:", data);
+    try {
+      const category = elCategory.value;
+      const response = await fetch(`${API}/question?category=${category}`);
+      if (!response.ok) throw new Error("No questions");
 
-    elSpinner.style.display = "none";
-    renderQuestion(data);
+      const data = await response.json();
+      currentQ = data;
+      renderQuestion(data);
+    } catch (err) {
+      elQ.textContent = "No more questions available.";
+      elOpts.innerHTML = "";
+      elNext.style.display = "none";
+      elRestartButton.style.display = "inline-block";
+    } finally {
+      elSpinner.style.display = "none";
+    }
   }
 
-  // Render to DOM
   function renderQuestion(q) {
     elQ.textContent = q.question;
     elOpts.innerHTML = "";
@@ -101,4 +129,4 @@ document.addEventListener("DOMContentLoaded", () => {
       elOpts.innerHTML = "";
     }
   }
-})
+});

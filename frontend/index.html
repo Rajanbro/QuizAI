@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GRE Quiz</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main id="app">
+    <h1>GRE Quiz App</h1>
+    <div class="controls-row">
+      <div class="select-group">
+        <label for="category">Choose a category:</label>
+        <select id="category">
+          <option value="verbal">Verbal Reasoning</option>
+          <option value="quant">Quantitative Reasoning</option>
+          <option value="analytical">Analytical Writing</option>
+        </select>
+      </div>
+      <div class="select-group">
+        <label for="difficulty">Choose a difficulty:</label>
+        <select id="difficulty">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+      <div class="select-group">
+        <label for="language-selector">Language:</label>
+        <select id="language-selector" title="Select Language">
+          <option value="en">English</option>
+          <option value="hi">Hindi</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+        </select>
+      </div>
+      <button id="theme-toggle">Dark Mode</button>
+    </div>
+    <div class="actions-row">
+      <button id="load-question" class="primary-btn">Start Quiz</button>
+      <button id="tts-btn" title="Read Aloud">🔊</button>
+      <button id="show-leaderboard">Leaderboard</button>
+    </div>
+    <div id="spinner">Loading...</div>
+    <section id="quiz-box">
+      <div id="timer"></div>
+      <p id="question">Click "Start Quiz" to begin.</p>
+      <ul id="options"></ul>
+      <div id="explanation-box"></div>
+    </section>
+    <div class="actions-row">
+      <button id="export-results">Export Results</button>
+      <button id="restart-quiz">Restart Quiz</button>
+      <button id="show-final-score">Show Final Score</button>
+      <button id="review-answers">Review Answers</button>
+    </div>
+    <div id="leaderboard"></div>
+    <p id="status"></p>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
